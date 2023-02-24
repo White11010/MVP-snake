@@ -1,6 +1,6 @@
-import type {ICell} from '../../interfaces/cell.interface';
-import {EDirection} from '../../enums/direction.enum';
-import {EModelEvent} from '../../enums/model-event.enum';
+import type { ICell } from '../../interfaces/cell.interface';
+import { EDirection } from '../../enums/direction.enum';
+import { EModelEvent } from '../../enums/model-event.enum';
 
 export interface IAppModel {
 	readonly cells: Array<ICell>;

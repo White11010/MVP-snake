@@ -1,9 +1,9 @@
-import type {ICell} from '../../interfaces/cell.interface';
-import type {IAppModel} from './app.model.interface';
+import type { ICell } from '../../interfaces/cell.interface';
+import type { IAppModel } from './app.model.interface';
 
-import {EDirection} from '../../enums/direction.enum';
-import {IObserver, Observer} from '../../utils/observer';
-import {EModelEvent} from '../../enums/model-event.enum';
+import { EDirection } from '../../enums/direction.enum';
+import { IObserver, Observer } from '../../utils/observer';
+import { EModelEvent } from '../../enums/model-event.enum';
 
 
 export class AppModel implements IAppModel {
@@ -22,19 +22,19 @@ export class AppModel implements IAppModel {
 			const headCell = this._cells.at(-1)!;
 			this._cells.shift();
 			if (this._direction === EDirection.RIGHT) {
-				this._cells.push({x: headCell.x + 1, y: headCell.y});
+				this._cells.push({ x: headCell.x + 1, y: headCell.y });
 			}
 			if (this._direction === EDirection.LEFT) {
-				this._cells.push({x: headCell.x - 1, y: headCell.y});
+				this._cells.push({ x: headCell.x - 1, y: headCell.y });
 			}
 			if (this._direction === EDirection.UP) {
-				this._cells.push({x: headCell.x, y: headCell.y - 1});
+				this._cells.push({ x: headCell.x, y: headCell.y - 1 });
 			}
 			if (this._direction === EDirection.DOWN) {
-				this._cells.push({x: headCell.x, y: headCell.y + 1});
+				this._cells.push({ x: headCell.x, y: headCell.y + 1 });
 			}
 			this._observer.broadcast(EModelEvent.CELLS_CHANGE, this._cells);
-		}, 200)
+		}, 200);
 	}
 
 	public get cells(): Array<ICell> {

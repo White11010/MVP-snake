@@ -1,5 +1,5 @@
-import {EKeyEvent} from '../../enums/key-event.enum';
-import {ICell} from '../../interfaces/cell.interface';
+import { EKeyEvent } from '../../enums/key-event.enum';
+import { ICell } from '../../interfaces/cell.interface';
 
 export interface IAppView {
 	draw(cells: Array<ICell>): void;

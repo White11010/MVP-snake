@@ -1,4 +1,4 @@
-import type {IObserver} from './observer.interface';
+import type { IObserver } from './observer.interface';
 
 export class Observer implements IObserver {
 	private observers: Array<{event: string, callback: (...args: any[]) => void}>;
@@ -14,7 +14,7 @@ export class Observer implements IObserver {
 	}
 
 	public subscribe(event: string, callback: (...args: any[]) => void): void {
-		this.observers.push({event, callback});
+		this.observers.push({ event, callback });
 	}
 
 }

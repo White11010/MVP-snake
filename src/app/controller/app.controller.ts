@@ -1,10 +1,10 @@
-import {IAppController} from './app.controller.interface';
-import {IAppModel} from '../model/app.model.interface';
-import {IAppView} from '../view/app.view.interface';
-import {EKeyEvent} from '../../enums/key-event.enum';
-import {EDirection} from '../../enums/direction.enum';
-import {EModelEvent} from '../../enums/model-event.enum';
-import {ICell} from '../../interfaces/cell.interface';
+import { IAppController } from './app.controller.interface';
+import { IAppModel } from '../model/app.model.interface';
+import { IAppView } from '../view/app.view.interface';
+import { EKeyEvent } from '../../enums/key-event.enum';
+import { EDirection } from '../../enums/direction.enum';
+import { EModelEvent } from '../../enums/model-event.enum';
+import { ICell } from '../../interfaces/cell.interface';
 
 export class AppController implements IAppController {
 	private _model: IAppModel;
@@ -31,7 +31,7 @@ export class AppController implements IAppController {
 
 	private subscribeToModelEvents(): void {
 		this._model.subscribe(EModelEvent.CELLS_CHANGE, (cells: Array<ICell>) => {
-			this._view.draw(cells)
-		})
+			this._view.draw(cells);
+		});
 	}
 }
