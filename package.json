@@ -1,8 +1,9 @@
 {
-  "name": "mvc",
+  "name": "mvc-snake",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "author": "White11010",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

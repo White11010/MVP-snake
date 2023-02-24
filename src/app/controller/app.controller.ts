@@ -1,10 +1,9 @@
-import { IAppController } from './app.controller.interface';
-import { IAppModel } from '../model/app.model.interface';
-import { IAppView } from '../view/app.view.interface';
-import { EKeyEvent } from '../../enums/key-event.enum';
-import { EDirection } from '../../enums/direction.enum';
-import { EModelEvent } from '../../enums/model-event.enum';
-import { ICell } from '../../interfaces/cell.interface';
+import type { IAppController } from './index';
+import type { IAppModel } from '../model';
+import type { IAppView } from '../view';
+import type { ICell } from '../../interfaces';
+import { EKeyEvent, EDirection, EModelEvent } from '../../enums';
+
 
 export class AppController implements IAppController {
 	private _model: IAppModel;
@@ -14,7 +13,7 @@ export class AppController implements IAppController {
 		this._model =  model;
 		this._view = view;
 
-		this.setViewKeyEventHandlers();
+		this.initViewKeyEventHandlers();
 		this.subscribeToModelEvents();
 	}
 
@@ -22,7 +21,9 @@ export class AppController implements IAppController {
 		this._model.startGame();
 	}
 
-	private setViewKeyEventHandlers(): void {
+
+
+	private initViewKeyEventHandlers(): void {
 		this._view.addKeyEventHandler(EKeyEvent.LEFT_ARROW, () => this._model.direction = EDirection.LEFT);
 		this._view.addKeyEventHandler(EKeyEvent.RIGHT_ARROW, () => this._model.direction = EDirection.RIGHT);
 		this._view.addKeyEventHandler(EKeyEvent.UP_ARROW, () => this._model.direction = EDirection.UP);
@@ -31,7 +32,12 @@ export class AppController implements IAppController {
 
 	private subscribeToModelEvents(): void {
 		this._model.subscribe(EModelEvent.CELLS_CHANGE, (cells: Array<ICell>) => {
+			console.log(cells[0]);
 			this._view.draw(cells);
+		});
+		this._model.subscribe(EModelEvent.FOOD_CHANGE, (food: ICell) => {
+			console.log(food);
+			this._view.drawFood(food);
 		});
 	}
 }

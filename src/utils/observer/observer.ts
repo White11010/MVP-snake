@@ -16,5 +16,4 @@ export class Observer implements IObserver {
 	public subscribe(event: string, callback: (...args: any[]) => void): void {
 		this.observers.push({ event, callback });
 	}
-
 }

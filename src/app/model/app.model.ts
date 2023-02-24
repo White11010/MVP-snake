@@ -1,20 +1,50 @@
-import type { ICell } from '../../interfaces/cell.interface';
-import type { IAppModel } from './app.model.interface';
+import type { IAppModel } from './index';
+import type { ICell } from '../../interfaces';
+import type { IObserver } from '../../utils/observer';
+import { EDirection, EModelEvent } from '../../enums';
+import { Observer } from '../../utils/observer';
 
-import { EDirection } from '../../enums/direction.enum';
-import { IObserver, Observer } from '../../utils/observer';
-import { EModelEvent } from '../../enums/model-event.enum';
 
+export interface IAppModelConfig {
+	fieldSize?: number,
+	renderInterval?: number;
+}
+const defaultConfig: IAppModelConfig = {
+	fieldSize: 40,
+	renderInterval: 200,
+};
 
 export class AppModel implements IAppModel {
+	private _config: IAppModelConfig;
+	private _food: ICell;
 	private _cells: Array<ICell>;
 	private _direction: EDirection;
 	private _observer: IObserver;
 
-	constructor() {
+	constructor(config: IAppModelConfig = {}) {
+		this.setConfig(config);
 		this.initCells();
+		this._food = this.generateFood();
 		this.initDirection();
 		this._observer = new Observer();
+	}
+
+	public get cells(): Array<ICell> {
+		return this._cells;
+	}
+
+	public get food(): ICell {
+		return this._food;
+	}
+
+	public get direction(): EDirection {
+		return this._direction;
+	}
+
+	public set direction(direction: EDirection) {
+		if (this.isDirectionChangePossible(direction)) {
+			this._direction = direction;
+		}
 	}
 
 	public startGame(): void {
@@ -34,34 +64,47 @@ export class AppModel implements IAppModel {
 				this._cells.push({ x: headCell.x, y: headCell.y + 1 });
 			}
 			this._observer.broadcast(EModelEvent.CELLS_CHANGE, this._cells);
-		}, 200);
-	}
-
-	public get cells(): Array<ICell> {
-		return this._cells;
-	}
-
-	public get direction(): EDirection {
-		return this._direction;
-	}
-
-	public set direction(direction: EDirection) {
-		this._direction = direction;
+			this._observer.broadcast(EModelEvent.FOOD_CHANGE, this._food);
+		}, this._config.renderInterval);
 	}
 
 	public subscribe(event: EModelEvent, callback: (...args: any[]) => void) {
 		this._observer.subscribe(event, callback);
 	}
 
+
+
+	private setConfig(config: IAppModelConfig = {}): void {
+		this._config = Object.assign(config, defaultConfig);
+	}
+
 	private initCells(): void {
 		this._cells = [
-			{ x: 4, y: 5 },
-			{ x: 5, y: 5 },
-			{ x: 6, y: 5 },
+			{ x: this._config.fieldSize! / 2 - 1, y: this._config.fieldSize! / 2 },
+			{ x: this._config.fieldSize! / 2, y: this._config.fieldSize! / 2 },
+			{ x: this._config.fieldSize! / 2 + 1, y: this._config.fieldSize! / 2 },
 		];
 	}
 
 	private initDirection(): void {
 		this._direction = EDirection.RIGHT;
+	}
+
+	private isDirectionChangePossible(direction: EDirection): boolean {
+		const oppositeDirectionsMap: Record<EDirection, EDirection> = {
+			[EDirection.LEFT]: EDirection.RIGHT,
+			[EDirection.UP]: EDirection.DOWN,
+			[EDirection.RIGHT]: EDirection.LEFT,
+			[EDirection.DOWN]: EDirection.UP,
+		};
+
+		return oppositeDirectionsMap[direction] !== this._direction;
+	}
+
+	private generateFood(): ICell {
+		return {
+			x: Math.floor(Math.random() * (this._config.fieldSize!)),
+			y: Math.floor(Math.random() * (this._config.fieldSize!))
+		};
 	}
 }
