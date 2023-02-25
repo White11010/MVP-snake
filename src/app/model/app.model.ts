@@ -14,6 +14,11 @@ const defaultConfig: IAppModelConfig = {
 	renderInterval: 200,
 };
 
+export interface IAppModelUpdateEventPayload {
+	snake: Array<ICell>,
+	food: ICell
+}
+
 export class AppModel implements IAppModel {
 	private _config: IAppModelConfig;
 	private _food: ICell;
@@ -24,47 +29,51 @@ export class AppModel implements IAppModel {
 	constructor(config: IAppModelConfig = {}) {
 		this.setConfig(config);
 		this.initCells();
-		this._food = this.generateFood();
+		this.generateNewFood();
 		this.initDirection();
 		this._observer = new Observer();
 	}
 
-	public get cells(): Array<ICell> {
-		return this._cells;
-	}
 
-	public get food(): ICell {
-		return this._food;
-	}
-
-	public get direction(): EDirection {
-		return this._direction;
-	}
-
-	public set direction(direction: EDirection) {
+	public setDirection(direction: EDirection) {
 		if (this.isDirectionChangePossible(direction)) {
 			this._direction = direction;
 		}
 	}
 
 	public startGame(): void {
-		setInterval(() => {
-			const headCell = this._cells.at(-1)!;
-			this._cells.shift();
+		const intervalId = setInterval(() => {
+			const { x: headX, y: headY } = this._cells.at(-1)!;
+
 			if (this._direction === EDirection.RIGHT) {
-				this._cells.push({ x: headCell.x + 1, y: headCell.y });
+				this._cells.push({ x: headX + 1, y: headY });
 			}
 			if (this._direction === EDirection.LEFT) {
-				this._cells.push({ x: headCell.x - 1, y: headCell.y });
+				this._cells.push({ x: headX - 1, y: headY });
 			}
 			if (this._direction === EDirection.UP) {
-				this._cells.push({ x: headCell.x, y: headCell.y - 1 });
+				this._cells.push({ x: headX, y: headY - 1 });
 			}
 			if (this._direction === EDirection.DOWN) {
-				this._cells.push({ x: headCell.x, y: headCell.y + 1 });
+				this._cells.push({ x: headX, y: headY + 1 });
 			}
-			this._observer.broadcast(EModelEvent.CELLS_CHANGE, this._cells);
-			this._observer.broadcast(EModelEvent.FOOD_CHANGE, this._food);
+
+			if (this.hasHeadIntersectionWithWall()) {
+				clearInterval(intervalId);
+				this.restartGame();
+				return;
+			}
+
+			if (this.hasHeadIntersectionWithFood()) {
+				this.generateNewFood();
+			} else {
+				this._cells.shift();
+			}
+
+			this._observer.broadcast(EModelEvent.STATE_UPDATE, {
+				snake: this._cells,
+				food: this._food,
+			} as IAppModelUpdateEventPayload);
 		}, this._config.renderInterval);
 	}
 
@@ -101,10 +110,32 @@ export class AppModel implements IAppModel {
 		return oppositeDirectionsMap[direction] !== this._direction;
 	}
 
-	private generateFood(): ICell {
-		return {
+	private hasHeadIntersectionWithFood(): boolean {
+		const { x: headX, y: headY } = this._cells.at(-1)!;
+		return headX === this._food.x && headY === this._food.y;
+	}
+
+	private hasHeadIntersectionWithWall(): boolean {
+		const { x: headX, y: headY } = this._cells.at(-1)!;
+		return (
+			headX > this._config.fieldSize! ||
+			headY > this._config.fieldSize! ||
+			headY < 0 ||
+			headX < 0
+		);
+	}
+
+	private generateNewFood(): void {
+		this._food = {
 			x: Math.floor(Math.random() * (this._config.fieldSize!)),
 			y: Math.floor(Math.random() * (this._config.fieldSize!))
 		};
+	}
+
+	private restartGame(): void {
+		this.initCells();
+		this.initDirection();
+		this.generateNewFood();
+		this.startGame();
 	}
 }

@@ -1,5 +1,5 @@
 import type { IAppModel } from './app.model.interface';
-import type { IAppModelConfig } from './app.model';
+import type { IAppModelConfig, IAppModelUpdateEventPayload } from './app.model';
 import { AppModel } from './app.model';
 
 export {
@@ -9,4 +9,5 @@ export {
 export type {
 	IAppModelConfig,
 	IAppModel,
+	IAppModelUpdateEventPayload,
 };

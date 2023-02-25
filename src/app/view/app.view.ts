@@ -30,10 +30,11 @@ export class AppView implements IAppView {
 		this.initEventListeners();
 	}
 
-	public draw(cells: Array<ICell>): void {
+	public draw(snake: Array<ICell>, food: ICell): void {
 		this.clearContext();
+
 		this._context.fillStyle = this._config.snakeColor!;
-		cells.forEach(cell => {
+		snake.forEach(cell => {
 			this._context.fillRect(
 				cell.x * this._config.scale!,
 				cell.y * this._config.scale!,
@@ -41,9 +42,7 @@ export class AppView implements IAppView {
 				this._config.scale! - 1
 			);
 		});
-	}
 
-	public drawFood(food: ICell): void {
 		this._context.fillStyle = this._config.foodColor!;
 		this._context.fillRect(
 			food.x * this._config.scale!,
