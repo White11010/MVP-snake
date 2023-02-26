@@ -1,23 +1,15 @@
 import type { IAppModel } from './index';
 import type { ICell } from '../../interfaces';
 import type { IObserver } from '../../utils/observer';
-import { EDirection, EModelEvent } from '../../enums';
+import type { IAppModelConfig, IAppModelUpdateEventPayload } from './interfaces';
+import { EDirection, EModelEvent } from './index';
 import { Observer } from '../../utils/observer';
 
-
-export interface IAppModelConfig {
-	fieldSize?: number,
-	renderInterval?: number;
-}
 const defaultConfig: IAppModelConfig = {
 	fieldSize: 40,
-	renderInterval: 200,
+	renderInterval: 100,
 };
 
-export interface IAppModelUpdateEventPayload {
-	snake: Array<ICell>,
-	food: ICell
-}
 
 export class AppModel implements IAppModel {
 	private _config: IAppModelConfig;
@@ -58,7 +50,7 @@ export class AppModel implements IAppModel {
 				this._cells.push({ x: headX, y: headY + 1 });
 			}
 
-			if (this.hasHeadIntersectionWithWall()) {
+			if (this.hasHeadIntersectionWithWall() || this.hasHeadIntersectionWithBody()) {
 				clearInterval(intervalId);
 				this.restartGame();
 				return;
@@ -123,6 +115,14 @@ export class AppModel implements IAppModel {
 			headY < 0 ||
 			headX < 0
 		);
+	}
+
+	private hasHeadIntersectionWithBody(): boolean {
+		const { x: headX, y: headY } = this._cells.at(-1)!;
+		const body = this._cells.slice(0, this._cells.length - 1);
+		return body.some(({ x: bodyCellX, y: bodyCellY }: ICell) => {
+			return headX === bodyCellX && headY === bodyCellY;
+		});
 	}
 
 	private generateNewFood(): void {

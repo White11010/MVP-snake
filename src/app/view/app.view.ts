@@ -1,6 +1,6 @@
 import type { IAppView } from './app.view.interface';
 import type { ICell } from '../../interfaces';
-import { EKeyEvent } from '../../enums';
+import { EKeyEvent } from './index';
 
 
 type TKeyHandlers = Record<EKeyEvent, (...args: any[]) => void> | Record<string,never>;

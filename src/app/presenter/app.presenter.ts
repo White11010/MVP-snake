@@ -1,7 +1,10 @@
 import type { IAppPresenter } from './index';
-import type { IAppModel, IAppModelUpdateEventPayload } from '../model';
+// View
 import type { IAppView } from '../view';
-import { EKeyEvent, EDirection, EModelEvent } from '../../enums';
+import { EKeyEvent } from '../view';
+// Model
+import type { IAppModel, IAppModelUpdateEventPayload } from '../model';
+import { EDirection, EModelEvent } from '../model';
 
 
 export class AppPresenter implements IAppPresenter {

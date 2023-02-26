@@ -1,5 +1,5 @@
 import type { ICell } from '../../interfaces';
-import { EKeyEvent } from '../../enums';
+import { EKeyEvent } from './index';
 
 
 export interface IAppView {

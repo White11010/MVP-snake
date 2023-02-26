@@ -1,4 +1,4 @@
-import { EDirection, EModelEvent } from '../../enums';
+import { EDirection, EModelEvent } from './index';
 
 
 export interface IAppModel {
